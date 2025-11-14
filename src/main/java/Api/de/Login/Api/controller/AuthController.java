@@ -10,7 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import Api.de.Login.Api.dto.LoginRequest;
-import Api.de.Login.Api.service.AuthService;
+import Api.de.Login.Api.model.Usuario;
+import Api.de.Login.Api.service.AuthService; 
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -26,16 +27,23 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
 
-        boolean ok = authService.login(request.getEmail(), request.getPassword());
+        Usuario user = authService.login(request.getEmail(), request.getPassword());
 
-        if (!ok) {
+        if (user == null) {
             return ResponseEntity.status(401).body(
-                    Map.of("message", "Credenciales incorrectas")
+                Map.of("message", "Credenciales incorrectas")
             );
         }
 
         return ResponseEntity.ok(
-                Map.of("message", "Login exitoso")
+            Map.of(
+                "message", "Login exitoso",
+                "usuario", Map.of(
+                    "id", user.getId(),
+                    "nombre", user.getNombre(),
+                    "email", user.getEmail()
+                )
+            )
         );
     }
 }
