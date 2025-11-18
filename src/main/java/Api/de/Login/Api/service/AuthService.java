@@ -14,13 +14,18 @@ public class AuthService {
         this.usuarioRepository = usuarioRepository;
     }
 
-    public boolean login(String email, String password) {
+    public Usuario login(String email, String password) {
         Usuario user = usuarioRepository.findByEmail(email).orElse(null);
 
         if (user == null) {
-            return false; 
+            return null;
         }
 
-        return user.getPassword().equals(password); 
+        if (!user.getPassword().equals(password)) {
+            return null;
+        }
+
+        return user; 
     }
 }
+
