@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import Api.de.Login.Api.dto.LoginRequest;
 import Api.de.Login.Api.model.Usuario;
 import Api.de.Login.Api.service.AuthService; 
+import Api.de.Login.Api.service.JwtService;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -19,9 +20,11 @@ import Api.de.Login.Api.service.AuthService;
 public class AuthController {
 
     private final AuthService authService;
+    private final JwtService jwtService;   
 
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService, JwtService jwtService) {
         this.authService = authService;
+        this.jwtService = jwtService;
     }
 
     @PostMapping("/login")
@@ -35,9 +38,12 @@ public class AuthController {
             );
         }
 
+        String token = jwtService.generateToken(user.getEmail());
+
         return ResponseEntity.ok(
             Map.of(
                 "message", "Login exitoso",
+                "token", token,                           
                 "usuario", Map.of(
                     "id", user.getId(),
                     "nombre", user.getNombre(),
