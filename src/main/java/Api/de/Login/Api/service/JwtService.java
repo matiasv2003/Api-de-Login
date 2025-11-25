@@ -1,0 +1,35 @@
+package Api.de.Login.Api.service;
+
+import java.util.Date;
+
+import javax.crypto.SecretKey;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+
+
+
+@Service
+public class JwtService {
+
+    @Value("${jwt.secret}")
+    private String secret;
+
+    public String generateToken(String email) {
+
+        SecretKey key = Keys.hmacShaKeyFor(secret.getBytes());
+
+        return Jwts.builder()
+            .setSubject(email)
+            .setIssuedAt(new Date())
+            .setExpiration(new Date(System.currentTimeMillis() + 3600000))
+            .signWith(key, SignatureAlgorithm.HS256)
+            .compact();
+    }
+}
+
+
